@@ -1,116 +1,121 @@
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
-}
-
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafb);
-}
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Inter, "Segoe UI", sans-serif;
   font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
+  line-height: 1.5;
+  color: #17242e;
+  background: #f3f6f8;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
 }
 
 .container {
-  margin: 0;
-  padding-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
-.row {
   display: flex;
   justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 32px 20px;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+.welcome-card {
+  width: min(100%, 520px);
+  padding: 48px;
+  border: 1px solid #e2e9ed;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 18px 48px rgb(25 49 65 / 8%);
 }
 
-a:hover {
-  color: #535bf2;
+.eyebrow {
+  margin: 0 0 12px;
+  color: #167b83;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
 }
 
 h1 {
-  text-align: center;
+  margin: 0;
+  color: #17242e;
+  font-size: clamp(2rem, 7vw, 2.6rem);
+  letter-spacing: -0.04em;
+  line-height: 1.15;
 }
 
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
+.intro {
+  margin: 14px 0 32px;
+  color: #63717b;
+}
+
+.greeting-form label {
+  display: block;
+  margin-bottom: 8px;
+  color: #344650;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.greeting-controls {
+  display: flex;
+  gap: 10px;
+}
+
+input {
+  min-width: 0;
+  flex: 1;
+  padding: 12px 14px;
+  border: 1px solid #ccd7dc;
+  border-radius: 10px;
+  color: #17242e;
+  background: #ffffff;
+  font-size: 1rem;
   font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
 }
 
 button {
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 10px;
+  color: #ffffff;
+  background: #176d75;
+  font: inherit;
+  font-weight: 600;
   cursor: pointer;
 }
 
 button:hover {
-  border-color: #396cd8;
-}
-button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
+  background: #125a61;
 }
 
-input,
-button {
-  outline: none;
+input:focus-visible,
+button:focus-visible {
+  outline: 3px solid #78c8c7;
+  outline-offset: 2px;
 }
 
-#greet-input {
-  margin-right: 5px;
+.greeting-message {
+  min-height: 24px;
+  margin: 16px 0 0;
+  color: #176d75;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
+@media (max-width: 480px) {
+  .welcome-card {
+    padding: 32px 24px;
   }
 
-  a:hover {
-    color: #24c8db;
-  }
-
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
-  }
-  button:active {
-    background-color: #0f0f0f69;
+  .greeting-controls {
+    flex-direction: column;
   }
 }

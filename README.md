@@ -1,6 +1,12 @@
-# Tauri + React + Typescript
+# CookLab
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+CookLab is a desktop application built with Tauri, React, and TypeScript.
+
+## Development
+
+- Install dependencies with `npm install`.
+- Start the desktop development app with `npm run tauri dev`.
+- Build the frontend with `npm run build`.
 
 ## Recommended IDE Setup
 
