@@ -32,12 +32,16 @@ button:focus-visible {
   outline-offset: 3px;
 }
 
+.app-shell[data-theme="light"] .workspace button:focus-visible {
+  outline-color: var(--accent-strong);
+}
+
 .app-shell {
   --surface: #ffffff;
-  --surface-soft: #eff3f0;
+  --surface-soft: #ecf2e4;
   --surface-hover: #f0f4f2;
-  --border: #e7ece9;
-  --border-strong: #dce5e0;
+  --border: #dde6d9;
+  --border-strong: #cbd8c8;
   --text: #26353b;
   --text-soft: #61716f;
   --text-muted: #879491;
@@ -48,7 +52,7 @@ button:focus-visible {
   --sidebar: #202d2e;
   --sidebar-text: #dae3df;
   --sidebar-muted: #98aaa4;
-  --sidebar-active: #304343;
+  --sidebar-active: #374941;
   --shadow: 0 14px 40px rgb(31 52 45 / 7%);
   display: grid;
   grid-template-columns: 236px minmax(0, 1fr);
