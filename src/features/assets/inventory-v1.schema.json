@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cooklab.local/schemas/asset-inventory-v1.schema.json",
+  "title": "CookLab Asset Inventory v1",
+  "description": "Minimal local asset index for theme and music references. IDs are case-sensitive and globally unique. Paths are relative to a configured asset root.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "inventoryVersion",
+    "themes",
+    "music"
+  ],
+  "properties": {
+    "inventoryVersion": {
+      "const": 1
+    },
+    "notes": {
+      "type": "string"
+    },
+    "themes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/asset"
+      }
+    },
+    "music": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/asset"
+      }
+    }
+  },
+  "$defs": {
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "relativePath"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+          "description": "Stable, case-sensitive ID unique across theme and music entries."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "relativePath": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        }
+      }
+    }
+  }
+}

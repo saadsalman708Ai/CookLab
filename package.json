@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build --configLoader native",
-    "test:plan": "node --test-isolation=none tests/plan-parse.test.mjs",
+    "test:plan": "node --test-isolation=none tests/plan-parse.test.mjs && node --test-isolation=none tests/asset-inventory.test.mjs",
     "preview": "vite preview",
     "tauri": "tauri"
   },

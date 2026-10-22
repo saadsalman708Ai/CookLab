@@ -1,0 +1,18 @@
+{
+  "inventoryVersion": 1,
+  "notes": "SYNTHETIC TEST FIXTURE ONLY. These entries and paths do not claim that any media files exist.",
+  "themes": [
+    {
+      "id": "theme.synthetic",
+      "name": "Synthetic Theme",
+      "relativePath": "themes/synthetic-theme.mp4"
+    }
+  ],
+  "music": [
+    {
+      "id": "music.synthetic",
+      "name": "Synthetic Music",
+      "relativePath": "music/synthetic-music.mp3"
+    }
+  ]
+}
