@@ -2,6 +2,7 @@ import Ajv2020 from "ajv/dist/2020.js";
 import type { ErrorObject } from "ajv";
 import schema from "./schema-v1.json" with { type: "json" };
 import type { CompactPlanV1 } from "./types";
+import { validatePlanSemantics } from "./validatePlanSemantics.ts";
 
 export interface PlanValidationError {
   path: string;
@@ -57,6 +58,11 @@ export function parsePlan(jsonText: string): ParsePlanResult {
 
   try {
     if (validatePlan(parsed)) {
+      const semanticErrors = validatePlanSemantics(parsed);
+      if (semanticErrors.length > 0) {
+        return { ok: false, errors: semanticErrors };
+      }
+
       return { ok: true, plan: parsed };
     }
 
