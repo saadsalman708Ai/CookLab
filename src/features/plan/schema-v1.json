@@ -1,0 +1,297 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cooklab.local/schemas/creative-plan-v1.schema.json",
+  "title": "CookLab Compact Creative Plan v1 (script-led overlay timing)",
+  "description": "Creative decisions only. Overlay count and placement are chosen from transcript meaning and the actual inventory/manifests, with no fixed per-minute quota. Paths, encoding, caption style, looping, volume, retries and rendering defaults belong to CookLab. Overlay parameters must match the selected template manifest.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "title",
+    "niche",
+    "transcript",
+    "segments"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "niche": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "transcript": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "words"
+      ],
+      "properties": {
+        "words": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number",
+                "minimum": 0
+              },
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            ],
+            "minItems": 3,
+            "maxItems": 3
+          }
+        }
+      }
+    },
+    "segments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "start",
+          "end",
+          "purpose",
+          "footage"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._-]+$"
+          },
+          "start": {
+            "type": "number",
+            "minimum": 0
+          },
+          "end": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "footage": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "query",
+              "keywords"
+            ],
+            "properties": {
+              "query": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 220
+              },
+              "keywords": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 10,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                }
+              },
+              "alternates": {
+                "type": "array",
+                "maxItems": 4,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 220
+                }
+              },
+              "avoid": {
+                "type": "array",
+                "maxItems": 6,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                }
+              },
+              "shotIntent": {
+                "type": "string",
+                "maxLength": 300
+              }
+            }
+          }
+        }
+      }
+    },
+    "themeRegions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/assetRegion"
+      }
+    },
+    "musicRegions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/assetRegion"
+      }
+    },
+    "overlays": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "start",
+          "templateId",
+          "purpose",
+          "parameters"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._-]+$"
+          },
+          "start": {
+            "type": "number",
+            "minimum": 0
+          },
+          "durationSeconds": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "templateId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "description": "Exact stable ID from the real inventory and overlay manifest."
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300,
+            "description": "Why this graphic is useful at this exact transcript moment."
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Only parameter names and values actually supported by the selected overlay manifest. Runtime validation checks the manifest."
+          },
+          "audioAssetId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          }
+        }
+      },
+      "description": "A variable number of meaningful overlay events chosen from transcript context and real inventory fit; there is no overlay-per-minute quota. Runtime validation calculates actual end time using manifest duration and enforces non-overlap plus minimum gap."
+    },
+    "assetRecommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "category",
+          "start",
+          "end",
+          "purpose",
+          "desired",
+          "searchTerms"
+        ],
+        "properties": {
+          "category": {
+            "enum": [
+              "footage",
+              "theme",
+              "music",
+              "overlay",
+              "sfx",
+              "image"
+            ]
+          },
+          "start": {
+            "type": "number",
+            "minimum": 0
+          },
+          "end": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "desired": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "searchTerms": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            }
+          }
+        }
+      }
+    },
+    "directorNotes": {
+      "type": "string",
+      "maxLength": 2000
+    }
+  },
+  "$defs": {
+    "assetRegion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end",
+        "assetId",
+        "purpose"
+      ],
+      "properties": {
+        "start": {
+          "type": "number",
+          "minimum": 0
+        },
+        "end": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "assetId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        }
+      }
+    }
+  }
+}

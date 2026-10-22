@@ -1,0 +1,318 @@
+{
+  "schemaVersion": 1,
+  "title": "Ocean Food Web Explained",
+  "niche": "science documentary",
+  "transcript": {
+    "words": [
+      [
+        0.2,
+        0.6,
+        "Most"
+      ],
+      [
+        0.62,
+        0.8,
+        "people"
+      ],
+      [
+        0.82,
+        1.0,
+        "think"
+      ],
+      [
+        1.02,
+        1.22,
+        "the"
+      ],
+      [
+        1.24,
+        1.55,
+        "ocean"
+      ],
+      [
+        1.57,
+        1.85,
+        "is"
+      ],
+      [
+        1.87,
+        2.1,
+        "empty,"
+      ],
+      [
+        2.25,
+        2.55,
+        "but"
+      ],
+      [
+        2.57,
+        2.75,
+        "below"
+      ],
+      [
+        2.77,
+        2.95,
+        "the"
+      ],
+      [
+        2.97,
+        3.15,
+        "surface,"
+      ],
+      [
+        3.4,
+        3.6,
+        "entire"
+      ],
+      [
+        3.62,
+        3.9,
+        "worlds"
+      ],
+      [
+        3.92,
+        4.1,
+        "are"
+      ],
+      [
+        4.12,
+        4.35,
+        "moving."
+      ],
+      [
+        4.8,
+        5.0,
+        "Tiny"
+      ],
+      [
+        5.02,
+        5.3,
+        "organisms"
+      ],
+      [
+        5.32,
+        5.55,
+        "power"
+      ],
+      [
+        5.57,
+        5.8,
+        "a"
+      ],
+      [
+        5.82,
+        6.2,
+        "massive"
+      ],
+      [
+        6.22,
+        6.55,
+        "food"
+      ],
+      [
+        6.57,
+        6.9,
+        "chain."
+      ],
+      [
+        7.3,
+        7.55,
+        "And"
+      ],
+      [
+        7.57,
+        7.9,
+        "even"
+      ],
+      [
+        7.92,
+        8.2,
+        "small"
+      ],
+      [
+        8.22,
+        8.5,
+        "changes"
+      ],
+      [
+        8.52,
+        8.75,
+        "can"
+      ],
+      [
+        8.77,
+        9.1,
+        "reshape"
+      ],
+      [
+        9.12,
+        9.3,
+        "it."
+      ],
+      [
+        10.0,
+        10.2,
+        "That"
+      ],
+      [
+        10.22,
+        10.5,
+        "is"
+      ],
+      [
+        10.52,
+        10.75,
+        "why"
+      ],
+      [
+        10.77,
+        11.0,
+        "healthy"
+      ],
+      [
+        11.02,
+        11.25,
+        "oceans"
+      ],
+      [
+        11.27,
+        11.5,
+        "matter."
+      ]
+    ]
+  },
+  "segments": [
+    {
+      "id": "seg-01",
+      "start": 0.0,
+      "end": 4.6,
+      "purpose": "Hook and reveal that the ocean is full of hidden activity.",
+      "footage": {
+        "query": "sunlight rays in a vast underwater ocean teeming with small marine life",
+        "keywords": [
+          "underwater",
+          "ocean life",
+          "sun rays",
+          "marine ecosystem"
+        ],
+        "alternates": [
+          "wide underwater reef ecosystem",
+          "plankton drifting through blue water"
+        ],
+        "avoid": [
+          "aquarium tanks",
+          "cartoon animation"
+        ],
+        "shotIntent": "Begin wide and mysterious, then show real movement beneath the surface."
+      }
+    },
+    {
+      "id": "seg-02",
+      "start": 4.6,
+      "end": 7.2,
+      "purpose": "Explain that tiny organisms support a large food chain.",
+      "footage": {
+        "query": "microscopic plankton and small marine organisms drifting in seawater",
+        "keywords": [
+          "plankton",
+          "micro marine life",
+          "food chain",
+          "underwater"
+        ],
+        "alternates": [
+          "krill feeding underwater",
+          "small schooling fish feeding"
+        ],
+        "avoid": [
+          "laboratory cartoons",
+          "unrelated land animals"
+        ],
+        "shotIntent": "Use a clear macro or close shot that makes small life feel consequential."
+      }
+    },
+    {
+      "id": "seg-03",
+      "start": 7.2,
+      "end": 9.7,
+      "purpose": "Introduce the fragility of connected ocean systems.",
+      "footage": {
+        "query": "school of fish changing direction together above a coral reef",
+        "keywords": [
+          "schooling fish",
+          "coral reef",
+          "ecosystem",
+          "marine life"
+        ],
+        "alternates": [
+          "predator and prey underwater",
+          "fish moving through a kelp forest"
+        ],
+        "shotIntent": "Show connected movement and a subtle sense of change."
+      }
+    },
+    {
+      "id": "seg-04",
+      "start": 9.7,
+      "end": 12.0,
+      "purpose": "Conclude with the importance of healthy oceans.",
+      "footage": {
+        "query": "healthy coral reef with diverse fish and clear blue water",
+        "keywords": [
+          "healthy coral reef",
+          "biodiversity",
+          "clear ocean",
+          "marine conservation"
+        ],
+        "alternates": [
+          "diverse reef fish swimming past coral",
+          "wide vibrant underwater reef"
+        ],
+        "avoid": [
+          "bleached dead coral",
+          "polluted water"
+        ],
+        "shotIntent": "End on a hopeful, visually rich image that reinforces the point."
+      }
+    }
+  ],
+  "themeRegions": [
+    {
+      "start": 0.0,
+      "end": 12.0,
+      "assetId": "theme.cinematic_grain",
+      "purpose": "Unify the footage with subtle texture."
+    }
+  ],
+  "musicRegions": [
+    {
+      "start": 0.0,
+      "end": 12.0,
+      "assetId": "music.dark_pulse",
+      "purpose": "A restrained atmospheric bed under the narration."
+    }
+  ],
+  "overlays": [
+    {
+      "id": "overlay-event-01",
+      "start": 1.0,
+      "templateId": "overlay.kinetic_heading",
+      "purpose": "Emphasize the central reveal that the ocean contains hidden life.",
+      "parameters": {
+        "heading": "HIDDEN OCEAN LIFE",
+        "accentColor": "#56D6FF"
+      }
+    },
+    {
+      "id": "overlay-event-02",
+      "start": 6.8,
+      "templateId": "overlay.kinetic_heading",
+      "purpose": "Summarize the idea that tiny organisms power a much larger ecosystem.",
+      "parameters": {
+        "heading": "SMALL LIFE. BIG IMPACT.",
+        "accentColor": "#56D6FF"
+      }
+    }
+  ],
+  "assetRecommendations": [],
+  "directorNotes": "Demonstration only. The two overlay events illustrate that timing and count follow the narrative, not a per-minute target. Confirm real template manifests and asset availability before rendering; do not infer numeric facts beyond the supplied narration."
+}
