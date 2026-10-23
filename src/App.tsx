@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { open } from "@tauri-apps/plugin-dialog";
 import "./App.css";
 
 type SectionId =
@@ -19,6 +21,29 @@ type Section = {
   description: string;
   icon: string;
 };
+
+type AssetFolderCategory =
+  | "footage"
+  | "images"
+  | "fonts"
+  | "captions"
+  | "music"
+  | "overlayTemplates"
+  | "overlaySfx"
+  | "themes";
+
+type AssetFolderSettings = Record<AssetFolderCategory, string>;
+
+const assetFolderCategories: { key: AssetFolderCategory; label: string }[] = [
+  { key: "footage", label: "Footage" },
+  { key: "images", label: "Images" },
+  { key: "fonts", label: "Fonts" },
+  { key: "captions", label: "Captions" },
+  { key: "music", label: "Music" },
+  { key: "overlayTemplates", label: "Overlay templates" },
+  { key: "overlaySfx", label: "Overlay SFX" },
+  { key: "themes", label: "Themes" },
+];
 
 const appearanceStorageKey = "cooklab-appearance";
 
@@ -251,6 +276,86 @@ function Settings({
   appearance: Appearance;
   onAppearanceChange: (appearance: Appearance) => void;
 }) {
+  const [assetFolders, setAssetFolders] = useState<AssetFolderSettings | null>(null);
+  const [loadingFolders, setLoadingFolders] = useState(true);
+  const [loadingError, setLoadingError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [busyCategory, setBusyCategory] = useState<AssetFolderCategory | null>(null);
+  const [reloadToken, setReloadToken] = useState(0);
+
+  useEffect(() => {
+    let isActive = true;
+    setLoadingFolders(true);
+    setLoadingError(null);
+    void invoke<AssetFolderSettings>("load_asset_folder_settings")
+      .then((settings) => {
+        if (isActive) setAssetFolders(settings);
+      })
+      .catch(() => {
+        if (isActive) {
+          setAssetFolders(null);
+          setLoadingError("Saved asset folders could not be loaded. No settings were changed.");
+        }
+      })
+      .finally(() => {
+        if (isActive) setLoadingFolders(false);
+      });
+    return () => {
+      isActive = false;
+    };
+  }, [reloadToken]);
+
+  async function saveCategory(category: AssetFolderCategory, path: string) {
+    if (!assetFolders || busyCategory) return;
+    setBusyCategory(category);
+    setActionError(null);
+    setSaveMessage(null);
+    try {
+      const updated = { ...assetFolders, [category]: path };
+      const persisted = await invoke<AssetFolderSettings>("save_asset_folder_settings", {
+        settings: updated,
+      });
+      setAssetFolders(persisted);
+      setSaveMessage(`${assetFolderCategories.find((item) => item.key === category)?.label} folder saved.`);
+    } catch {
+      setActionError("Could not save this folder. The previously saved settings were kept.");
+    } finally {
+      setBusyCategory(null);
+    }
+  }
+
+  async function browseCategory(category: AssetFolderCategory) {
+    if (!assetFolders || busyCategory) return;
+    setBusyCategory(category);
+    setActionError(null);
+    setSaveMessage(null);
+    let selectedPath: string | null;
+    try {
+      selectedPath = await open({ directory: true, multiple: false });
+    } catch {
+      setActionError("The folder picker could not be opened. Your saved folder was left unchanged.");
+      setBusyCategory(null);
+      return;
+    }
+    if (selectedPath === null) {
+      setBusyCategory(null);
+      return;
+    }
+    try {
+      const updated = { ...assetFolders, [category]: selectedPath };
+      const persisted = await invoke<AssetFolderSettings>("save_asset_folder_settings", {
+        settings: updated,
+      });
+      setAssetFolders(persisted);
+      setSaveMessage(`${assetFolderCategories.find((item) => item.key === category)?.label} folder saved.`);
+    } catch {
+      setActionError("Could not save this folder. The previously saved settings were kept.");
+    } finally {
+      setBusyCategory(null);
+    }
+  }
+
   return (
     <div className="section-content">
       <div className="section-heading settings-heading">
@@ -306,6 +411,59 @@ function Settings({
           This preference is saved locally in this app. Project settings will be
           handled separately in a future phase.
         </p>
+      </section>
+
+      <section className="settings-card asset-folders-card" aria-labelledby="asset-folders-title">
+        <div className="settings-card-heading">
+          <div>
+            <h3 id="asset-folders-title">Asset library folders</h3>
+            <p>Choose where CookLab should look for each kind of asset. Folder contents are not scanned yet.</p>
+          </div>
+        </div>
+        <div className="asset-folder-list">
+          {assetFolderCategories.map(({ key, label }) => (
+            <div className="asset-folder-row" key={key}>
+              <div className="asset-folder-info">
+                <strong>{label}</strong>
+                <code>
+                  {loadingFolders
+                    ? "Loading saved folder…"
+                    : loadingError
+                      ? "Unavailable until settings load"
+                      : assetFolders?.[key] || "Not configured"}
+                </code>
+              </div>
+              <div className="asset-folder-actions">
+                <button
+                  className="asset-folder-browse"
+                  disabled={!assetFolders || loadingFolders || Boolean(loadingError) || busyCategory !== null}
+                  onClick={() => void browseCategory(key)}
+                  type="button"
+                >
+                  {busyCategory === key ? "Working…" : "Browse"}
+                </button>
+                <button
+                  className="asset-folder-clear"
+                  disabled={!assetFolders || loadingFolders || Boolean(loadingError) || busyCategory !== null || !assetFolders?.[key]}
+                  onClick={() => void saveCategory(key, "")}
+                  type="button"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        {loadingError && (
+          <div className="asset-folder-feedback" role="alert">
+            <p>{loadingError}</p>
+            <button className="asset-folder-clear" onClick={() => setReloadToken((token) => token + 1)} type="button">
+              Retry loading
+            </button>
+          </div>
+        )}
+        {actionError && <p className="asset-folder-error" role="alert">{actionError}</p>}
+        {saveMessage && <p className="asset-folder-success" role="status">{saveMessage}</p>}
       </section>
 
       <section className="settings-note-card" aria-label="More settings">

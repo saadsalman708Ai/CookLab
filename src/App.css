@@ -915,6 +915,104 @@ button:focus-visible {
   font-size: 0.72rem;
 }
 
+.asset-folders-card { margin-top: 14px; }
+
+.asset-folder-list {
+  margin-top: 17px;
+  border-top: 1px solid var(--border);
+}
+
+.asset-folder-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.asset-folder-info {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.asset-folder-info strong {
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.asset-folder-info code {
+  overflow-wrap: anywhere;
+  color: var(--text-soft);
+  font-family: inherit;
+  font-size: 0.74rem;
+}
+
+.asset-folder-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 7px;
+}
+
+.asset-folder-browse,
+.asset-folder-clear,
+.asset-folder-feedback button {
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 7px;
+  background: var(--surface);
+  font-size: 0.74rem;
+  cursor: pointer;
+}
+
+.asset-folder-browse {
+  border-color: var(--accent-strong);
+  color: #fff;
+  background: var(--accent-strong);
+}
+
+.asset-folder-browse:hover:not(:disabled) { background: var(--accent); }
+.asset-folder-clear:hover:not(:disabled),
+.asset-folder-feedback button:hover { background: var(--surface-hover); }
+
+.asset-folder-browse:disabled,
+.asset-folder-clear:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
+.app-shell[data-theme="dark"] .asset-folder-browse {
+  border-color: #2f6d5b;
+  background: #2f6d5b;
+}
+
+.app-shell[data-theme="dark"] .asset-folder-browse:hover:not(:disabled) {
+  border-color: #285a50;
+  background: #285a50;
+}
+
+.app-shell[data-theme="dark"] .asset-folder-browse:disabled {
+  border-color: var(--border-strong);
+  color: var(--text-soft);
+  background: var(--surface);
+  opacity: 1;
+}
+
+.asset-folder-error,
+.asset-folder-success,
+.asset-folder-feedback p {
+  margin: 12px 0 0;
+  font-size: 0.76rem;
+}
+
+.asset-folder-error { color: #a33b36; }
+.asset-folder-success { color: var(--accent-strong); }
+.asset-folder-feedback p { margin-top: 0; color: #a33b36; }
+.asset-folder-feedback button { margin-top: 9px; color: var(--text); }
+
 .settings-note-card {
   display: flex;
   align-items: flex-start;
@@ -981,6 +1079,8 @@ button:focus-visible {
   .settings-card { padding: 17px; }
   .settings-note-card { flex-wrap: wrap; }
   .settings-note-card > .planned-label { margin-left: 43px; }
+  .asset-folder-row { align-items: flex-start; flex-direction: column; }
+  .asset-folder-actions { align-self: flex-end; }
 }
 
 @media (prefers-reduced-motion: reduce) {
