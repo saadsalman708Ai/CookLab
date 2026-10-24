@@ -21,14 +21,20 @@ function toValidationError(error: ErrorObject): PlanValidationError {
   const params = error.params as Record<string, unknown>;
   const basePath = error.instancePath;
   const missingProperty = params.missingProperty;
+  const additionalProperty = params.additionalProperty;
+  const escapePointerToken = (value: string) => value.replace(/~/g, "~0").replace(/\//g, "~1");
   const path =
     error.keyword === "required" && typeof missingProperty === "string"
-      ? `${basePath}/${missingProperty.replace(/~/g, "~0").replace(/\//g, "~1")}`
+      ? `${basePath}/${escapePointerToken(missingProperty)}`
+      : error.keyword === "additionalProperties" && typeof additionalProperty === "string"
+        ? `${basePath}/${escapePointerToken(additionalProperty)}`
       : basePath || "/";
 
   const message =
     error.keyword === "required" && typeof missingProperty === "string"
       ? `Missing required property "${missingProperty}".`
+      : error.keyword === "additionalProperties" && typeof additionalProperty === "string"
+        ? `Unknown property "${additionalProperty}" is not allowed.`
       : error.message ?? "Value does not match the plan schema.";
 
   return { path, message, keyword: error.keyword };

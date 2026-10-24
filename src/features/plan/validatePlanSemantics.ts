@@ -8,15 +8,31 @@ export interface PlanSemanticError {
 
 export function validatePlanSemantics(plan: CompactPlanV1): PlanSemanticError[] {
   const errors: PlanSemanticError[] = [];
-  const words = plan.transcript.words;
+  const words = plan.transcript;
   const segments = plan.segments;
+
+  if (words.length === 0) {
+    errors.push({
+      path: "/transcript",
+      message: "Add at least one word with start time, end time, and text to the transcript.",
+      keyword: "semantic",
+    });
+  }
+
+  if (segments.length === 0) {
+    errors.push({
+      path: "/segments",
+      message: "Add at least one semantic segment to cover the transcript words.",
+      keyword: "semantic",
+    });
+  }
 
   for (let index = 0; index < words.length; index += 1) {
     const [startSeconds, endSeconds] = words[index];
 
     if (endSeconds <= startSeconds) {
       errors.push({
-        path: `/transcript/words/${index}`,
+        path: `/transcript/${index}`,
         message: `Word interval end (${endSeconds}) must be greater than its start (${startSeconds}).`,
         keyword: "semantic",
       });
@@ -24,7 +40,7 @@ export function validatePlanSemantics(plan: CompactPlanV1): PlanSemanticError[] 
 
     if (index > 0 && startSeconds < words[index - 1][0]) {
       errors.push({
-        path: `/transcript/words/${index}`,
+        path: `/transcript/${index}`,
         message: `Word start (${startSeconds}) is earlier than the preceding word start (${words[index - 1][0]}). Keep transcript words in chronological order.`,
         keyword: "semantic",
       });
@@ -56,7 +72,7 @@ export function validatePlanSemantics(plan: CompactPlanV1): PlanSemanticError[] 
 
   // Skip assignment diagnostics when zero- or negative-length ranges could
   // create cascading uncovered or multiply-covered word errors.
-  if (segmentIntervalsHavePositiveLength) {
+  if (segments.length > 0 && segmentIntervalsHavePositiveLength) {
     for (let wordIndex = 0; wordIndex < words.length; wordIndex += 1) {
       const wordStart = words[wordIndex][0];
       const matchingSegmentIndexes: number[] = [];
@@ -70,13 +86,13 @@ export function validatePlanSemantics(plan: CompactPlanV1): PlanSemanticError[] 
 
       if (matchingSegmentIndexes.length === 0) {
         errors.push({
-          path: `/transcript/words/${wordIndex}`,
+          path: `/transcript/${wordIndex}`,
           message: `Word start (${wordStart}) is not covered by any segment. Segment intervals include their start and exclude their end.`,
           keyword: "semantic",
         });
       } else if (matchingSegmentIndexes.length > 1) {
         errors.push({
-          path: `/transcript/words/${wordIndex}`,
+          path: `/transcript/${wordIndex}`,
           message: `Word start (${wordStart}) is covered by multiple segments: ${matchingSegmentIndexes.join(", ")}. Adjust the segment intervals so exactly one includes it.`,
           keyword: "semantic",
         });

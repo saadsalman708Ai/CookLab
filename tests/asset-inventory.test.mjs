@@ -93,31 +93,31 @@ test("empty theme and music collections are valid", () => {
 
 test("theme and music references resolve from their matching inventory categories", async () => {
   const plan = await loadPlan();
-  plan.themeRegions[0].assetId = "theme.synthetic";
-  plan.musicRegions[0].assetId = "music.synthetic";
+  plan.themes[0].file = "synthetic-theme.mp4";
+  plan.music[0].file = "synthetic-music.mp3";
   const inventory = await loadInventory();
   assert.equal(inventory.ok, true);
   if (inventory.ok) assert.deepEqual(validatePlanAssetReferences(plan, inventory.inventory), []);
 });
 
-test("missing theme and music IDs are reported at their plan paths", async () => {
+test("missing theme and music filenames are reported at their plan paths", async () => {
   const plan = await loadPlan();
-  plan.themeRegions[0].assetId = "theme.missing";
-  plan.musicRegions[0].assetId = "music.missing";
+  plan.themes[0].file = "missing-theme.mp4";
+  plan.music[0].file = "missing-music.mp3";
   const inventory = await loadInventory();
   assert.equal(inventory.ok, true);
   if (inventory.ok) {
     const errors = validatePlanAssetReferences(plan, inventory.inventory);
-    assert.deepEqual(errors.map((error) => error.path), ["/themeRegions/0/assetId", "/musicRegions/0/assetId"]);
-    assert.match(errors[0].message, /not found in the theme inventory/);
-    assert.match(errors[1].message, /not found in the music inventory/);
+    assert.deepEqual(errors.map((error) => error.path), ["/themes/0/file", "/music/0/file"]);
+    assert.match(errors[0].message, /filename "missing-theme.mp4" was not found in the theme inventory/);
+    assert.match(errors[1].message, /filename "missing-music.mp3" was not found in the music inventory/);
   }
 });
 
-test("references resolving to the opposite category report wrong-category errors", async () => {
+test("filenames resolving to the opposite category report wrong-category errors", async () => {
   const plan = await loadPlan();
-  plan.themeRegions[0].assetId = "music.synthetic";
-  plan.musicRegions[0].assetId = "theme.synthetic";
+  plan.themes[0].file = "synthetic-music.mp3";
+  plan.music[0].file = "synthetic-theme.mp4";
   const inventory = await loadInventory();
   assert.equal(inventory.ok, true);
   if (inventory.ok) {
@@ -129,18 +129,18 @@ test("references resolving to the opposite category report wrong-category errors
 
 test("reference diagnostics are deterministic and inputs are not mutated", async () => {
   const plan = await loadPlan();
-  plan.themeRegions[0].assetId = "theme.synthetic";
-  plan.themeRegions.push({ ...plan.themeRegions[0], assetId: "theme.unknown" });
-  plan.musicRegions[0].assetId = "theme.synthetic";
+  plan.themes[0].file = "synthetic-theme.mp4";
+  plan.themes.push({ ...plan.themes[0], file: "missing-theme.mp4" });
+  plan.music[0].file = "synthetic-theme.mp4";
   const inventory = await loadInventory();
   assert.equal(inventory.ok, true);
   if (inventory.ok) {
     const planBefore = structuredClone(plan);
     const inventoryBefore = structuredClone(inventory.inventory);
     const errors = validatePlanAssetReferences(plan, inventory.inventory);
-    assert.deepEqual(errors.map(({ path, assetId }) => [path, assetId]), [
-      ["/themeRegions/1/assetId", "theme.unknown"],
-      ["/musicRegions/0/assetId", "theme.synthetic"],
+    assert.deepEqual(errors.map(({ path, filename }) => [path, filename]), [
+      ["/themes/1/file", "missing-theme.mp4"],
+      ["/music/0/file", "synthetic-theme.mp4"],
     ]);
     assert.deepEqual(plan, planBefore);
     assert.deepEqual(inventory.inventory, inventoryBefore);
@@ -149,8 +149,8 @@ test("reference diagnostics are deterministic and inputs are not mutated", async
 
 test("plans without theme or music references remain valid", async () => {
   const plan = await loadPlan();
-  delete plan.themeRegions;
-  delete plan.musicRegions;
+  plan.themes = [];
+  plan.music = [];
   const parsed = parsePlan(JSON.stringify(plan));
   assert.equal(parsed.ok, true, JSON.stringify(parsed));
 
@@ -158,5 +158,33 @@ test("plans without theme or music references remain valid", async () => {
   assert.equal(inventory.ok, true);
   if (parsed.ok && inventory.ok) {
     assert.deepEqual(validatePlanAssetReferences(parsed.plan, inventory.inventory), []);
+  }
+});
+
+test("asset filenames cannot escape their configured inventory roots", async () => {
+  const plan = await loadPlan();
+  plan.themes[0].file = "../synthetic-theme.mp4";
+  const inventory = await loadInventory();
+  assert.equal(inventory.ok, true);
+  if (inventory.ok) {
+    const errors = validatePlanAssetReferences(plan, inventory.inventory);
+    assert.equal(errors.length, 1);
+    assert.equal(errors[0].path, "/themes/0/file");
+    assert.match(errors[0].message, /single filename without path separators/);
+  }
+});
+
+test("duplicate basenames in the expected category are reported as ambiguous", async () => {
+  const plan = await loadPlan();
+  const inventory = await loadInventory();
+  assert.equal(inventory.ok, true);
+  if (inventory.ok) {
+    inventory.inventory.themes.push({
+      id: "theme.duplicate",
+      name: "Duplicate basename",
+      relativePath: "alternate/synthetic-theme.mp4",
+    });
+    const errors = validatePlanAssetReferences(plan, inventory.inventory);
+    assert.ok(errors.some((error) => error.path === "/themes/0/file" && /ambiguous/.test(error.message)));
   }
 });

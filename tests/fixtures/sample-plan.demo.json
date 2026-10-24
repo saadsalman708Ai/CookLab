@@ -1,9 +1,7 @@
 {
   "schemaVersion": 1,
   "title": "Ocean Food Web Explained",
-  "niche": "science documentary",
-  "transcript": {
-    "words": [
+  "transcript": [
       [
         0.2,
         0.6,
@@ -179,11 +177,9 @@
         11.5,
         "matter."
       ]
-    ]
-  },
+    ],
   "segments": [
     {
-      "id": "seg-01",
       "start": 0.0,
       "end": 4.6,
       "purpose": "Hook and reveal that the ocean is full of hidden activity.",
@@ -203,11 +199,10 @@
           "aquarium tanks",
           "cartoon animation"
         ],
-        "shotIntent": "Begin wide and mysterious, then show real movement beneath the surface."
+        "visualIntent": "Begin wide and mysterious, then show real movement beneath the surface."
       }
     },
     {
-      "id": "seg-02",
       "start": 4.6,
       "end": 7.2,
       "purpose": "Explain that tiny organisms support a large food chain.",
@@ -227,11 +222,10 @@
           "laboratory cartoons",
           "unrelated land animals"
         ],
-        "shotIntent": "Use a clear macro or close shot that makes small life feel consequential."
+        "visualIntent": "Use a clear macro or close shot that makes small life feel consequential."
       }
     },
     {
-      "id": "seg-03",
       "start": 7.2,
       "end": 9.7,
       "purpose": "Introduce the fragility of connected ocean systems.",
@@ -247,11 +241,10 @@
           "predator and prey underwater",
           "fish moving through a kelp forest"
         ],
-        "shotIntent": "Show connected movement and a subtle sense of change."
+        "visualIntent": "Show connected movement and a subtle sense of change."
       }
     },
     {
-      "id": "seg-04",
       "start": 9.7,
       "end": 12.0,
       "purpose": "Conclude with the importance of healthy oceans.",
@@ -271,31 +264,30 @@
           "bleached dead coral",
           "polluted water"
         ],
-        "shotIntent": "End on a hopeful, visually rich image that reinforces the point."
+        "visualIntent": "End on a hopeful, visually rich image that reinforces the point."
       }
     }
   ],
-  "themeRegions": [
+  "themes": [
     {
       "start": 0.0,
       "end": 12.0,
-      "assetId": "theme.cinematic_grain",
-      "purpose": "Unify the footage with subtle texture."
+      "file": "synthetic-theme.mp4",
+      "reason": "Unify the footage with subtle texture."
     }
   ],
-  "musicRegions": [
+  "music": [
     {
       "start": 0.0,
       "end": 12.0,
-      "assetId": "music.dark_pulse",
-      "purpose": "A restrained atmospheric bed under the narration."
+      "file": "synthetic-music.mp3",
+      "reason": "A restrained atmospheric bed under the narration."
     }
   ],
   "overlays": [
     {
-      "id": "overlay-event-01",
       "start": 1.0,
-      "templateId": "overlay.kinetic_heading",
+      "folder": "kinetic-heading",
       "purpose": "Emphasize the central reveal that the ocean contains hidden life.",
       "parameters": {
         "heading": "HIDDEN OCEAN LIFE",
@@ -303,9 +295,8 @@
       }
     },
     {
-      "id": "overlay-event-02",
       "start": 6.8,
-      "templateId": "overlay.kinetic_heading",
+      "folder": "kinetic-heading",
       "purpose": "Summarize the idea that tiny organisms power a much larger ecosystem.",
       "parameters": {
         "heading": "SMALL LIFE. BIG IMPACT.",
@@ -314,5 +305,8 @@
     }
   ],
   "assetRecommendations": [],
-  "directorNotes": "Demonstration only. The two overlay events illustrate that timing and count follow the narrative, not a per-minute target. Confirm real template manifests and asset availability before rendering; do not infer numeric facts beyond the supplied narration."
+  "directorNotes": [
+    "Demonstration only. The two overlay events illustrate that timing and count follow the narrative, not a per-minute target.",
+    "Confirm real template manifests and asset availability before rendering; do not infer numeric facts beyond the supplied narration."
+  ]
 }

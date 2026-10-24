@@ -1,16 +1,18 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://cooklab.local/schemas/creative-plan-v1.schema.json",
-  "title": "CookLab Compact Creative Plan v1 (script-led overlay timing)",
-  "description": "Creative decisions only. Overlay count and placement are chosen from transcript meaning and the actual inventory/manifests, with no fixed per-minute quota. Paths, encoding, caption style, looping, volume, retries and rendering defaults belong to CookLab. Overlay parameters must match the selected template manifest.",
+  "$id": "https://cooklab.local/schemas/specialized-project-v1.schema.json",
+  "title": "CookLab Specialized Project Plan v1",
+  "description": "Compact creative edit plan. Asset existence, overlay parameter compatibility, and timeline semantics require application-level validation beyond JSON Schema.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schemaVersion",
     "title",
-    "niche",
     "transcript",
-    "segments"
+    "segments",
+    "themes",
+    "music",
+    "overlays"
   ],
   "properties": {
     "schemaVersion": {
@@ -19,64 +21,44 @@
     "title": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 160
-    },
-    "niche": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 120
+      "maxLength": 200
     },
     "transcript": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "words"
-      ],
-      "properties": {
-        "words": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "array",
-            "prefixItems": [
-              {
-                "type": "number",
-                "minimum": 0
-              },
-              {
-                "type": "number",
-                "exclusiveMinimum": 0
-              },
-              {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 200
-              }
-            ],
-            "minItems": 3,
-            "maxItems": 3
+      "type": "array",
+      "description": "Word-level timestamps as [startSeconds, endSeconds, exactWordText]. Preserve the supplied words, order, punctuation, and timing.",
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          {
+            "type": "number",
+            "minimum": 0
+          },
+          {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          {
+            "type": "string",
+            "minLength": 1
           }
-        }
+        ],
+        "minItems": 3,
+        "maxItems": 3
       }
     },
     "segments": {
       "type": "array",
-      "minItems": 1,
+      "description": "Semantic visual intervals; not one cut per word. Each word should map to exactly one segment using its start time and half-open intervals [start,end).",
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "id",
           "start",
           "end",
           "purpose",
           "footage"
         ],
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^[A-Za-z0-9._-]+$"
-          },
           "start": {
             "type": "number",
             "minimum": 0
@@ -101,12 +83,11 @@
               "query": {
                 "type": "string",
                 "minLength": 1,
-                "maxLength": 220
+                "maxLength": 300
               },
               "keywords": {
                 "type": "array",
                 "minItems": 1,
-                "maxItems": 10,
                 "items": {
                   "type": "string",
                   "minLength": 1,
@@ -115,23 +96,21 @@
               },
               "alternates": {
                 "type": "array",
-                "maxItems": 4,
                 "items": {
                   "type": "string",
                   "minLength": 1,
-                  "maxLength": 220
+                  "maxLength": 300
                 }
               },
               "avoid": {
                 "type": "array",
-                "maxItems": 6,
                 "items": {
                   "type": "string",
                   "minLength": 1,
                   "maxLength": 80
                 }
               },
-              "shotIntent": {
+              "visualIntent": {
                 "type": "string",
                 "maxLength": 300
               }
@@ -140,79 +119,123 @@
         }
       }
     },
-    "themeRegions": {
+    "themes": {
       "type": "array",
-      "items": {
-        "$ref": "#/$defs/assetRegion"
-      }
-    },
-    "musicRegions": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/assetRegion"
-      }
-    },
-    "overlays": {
-      "type": "array",
+      "description": "Explicit exact filenames from the configured theme library; no IDs or machine-specific paths.",
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "id",
           "start",
-          "templateId",
-          "purpose",
-          "parameters"
+          "end",
+          "file"
         ],
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^[A-Za-z0-9._-]+$"
-          },
           "start": {
             "type": "number",
             "minimum": 0
           },
-          "durationSeconds": {
+          "end": {
             "type": "number",
             "exclusiveMinimum": 0
           },
-          "templateId": {
+          "file": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 160,
-            "description": "Exact stable ID from the real inventory and overlay manifest."
+            "maxLength": 255
           },
-          "purpose": {
+          "reason": {
+            "type": "string",
+            "maxLength": 300
+          }
+        }
+      }
+    },
+    "music": {
+      "type": "array",
+      "description": "Explicit exact filenames from the configured music library; no IDs or machine-specific paths.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "start",
+          "end",
+          "file"
+        ],
+        "properties": {
+          "start": {
+            "type": "number",
+            "minimum": 0
+          },
+          "end": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "file": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 300,
-            "description": "Why this graphic is useful at this exact transcript moment."
+            "maxLength": 255
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 300
+          }
+        }
+      }
+    },
+    "overlays": {
+      "type": "array",
+      "description": "Overlay folder names plus creative values supported by that folder's manifest. The app validates every parameter against the manifest.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "start",
+          "folder",
+          "parameters"
+        ],
+        "properties": {
+          "start": {
+            "type": "number",
+            "minimum": 0
+          },
+          "folder": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[^/\\\\]+$"
+          },
+          "durationSeconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Optional and valid only when the selected manifest supports custom duration and the value is within its declared range."
           },
           "parameters": {
             "type": "object",
-            "description": "Only parameter names and values actually supported by the selected overlay manifest. Runtime validation checks the manifest."
+            "description": "Manifest-defined parameter IDs and values only. Values are checked against the selected overlay manifest at runtime.",
+            "additionalProperties": true
           },
-          "audioAssetId": {
+          "purpose": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 160
+            "maxLength": 300
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 300
           }
         }
-      },
-      "description": "A variable number of meaningful overlay events chosen from transcript context and real inventory fit; there is no overlay-per-minute quota. Runtime validation calculates actual end time using manifest duration and enforces non-overlap plus minimum gap."
+      }
     },
     "assetRecommendations": {
       "type": "array",
+      "description": "Suggestions for assets not present or not suitable in the inventory; never invent a filename/folder as if it already exists.",
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": [
           "category",
-          "start",
-          "end",
-          "purpose",
-          "desired",
+          "reason",
+          "desiredCharacteristics",
           "searchTerms"
         ],
         "properties": {
@@ -221,9 +244,7 @@
               "footage",
               "theme",
               "music",
-              "overlay",
-              "sfx",
-              "image"
+              "overlay"
             ]
           },
           "start": {
@@ -234,63 +255,33 @@
             "type": "number",
             "exclusiveMinimum": 0
           },
-          "purpose": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 300
-          },
-          "desired": {
+          "reason": {
             "type": "string",
             "minLength": 1,
             "maxLength": 500
           },
+          "desiredCharacteristics": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 700
+          },
           "searchTerms": {
             "type": "array",
             "minItems": 1,
-            "maxItems": 8,
             "items": {
               "type": "string",
               "minLength": 1,
-              "maxLength": 160
+              "maxLength": 120
             }
           }
         }
       }
     },
     "directorNotes": {
-      "type": "string",
-      "maxLength": 2000
-    }
-  },
-  "$defs": {
-    "assetRegion": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "start",
-        "end",
-        "assetId",
-        "purpose"
-      ],
-      "properties": {
-        "start": {
-          "type": "number",
-          "minimum": 0
-        },
-        "end": {
-          "type": "number",
-          "exclusiveMinimum": 0
-        },
-        "assetId": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 160
-        },
-        "purpose": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 300
-        }
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 500
       }
     }
   }

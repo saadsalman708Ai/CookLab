@@ -23,7 +23,7 @@ export type ParseAssetInventoryResult =
 
 export interface PlanAssetReferenceError {
   path: string;
-  assetId: string;
+  filename: string;
   message: string;
   keyword: "reference";
 }
