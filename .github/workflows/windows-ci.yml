@@ -1,0 +1,83 @@
+name: Windows CI
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: Frontend checks (Node 24)
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24.22.0
+          package-manager-cache: false
+
+      - name: Report and validate Node.js and npm
+        shell: pwsh
+        run: |
+          node --version
+          $npmVersionText = (npm --version).Trim()
+          Write-Output "npm $npmVersionText"
+          try {
+            $npmVersion = [version]$npmVersionText
+          } catch {
+            throw "Could not parse npm release version: $npmVersionText"
+          }
+          if ($npmVersion -lt [version]'10.0.0') {
+            throw "npm >=10 is required; found $npmVersionText"
+          }
+        working-directory: desktop-app
+
+      - name: Install locked dependencies
+        run: npm ci
+        working-directory: desktop-app
+
+      - name: List top-level dependencies
+        run: npm.cmd ls --depth=0
+        working-directory: desktop-app
+
+      - name: Run plan tests
+        run: npm.cmd run test:plan
+        working-directory: desktop-app
+
+      - name: Build frontend
+        run: npm.cmd run build
+        working-directory: desktop-app
+
+  rust:
+    name: Rust check (${{ matrix.toolchain }})
+    runs-on: windows-2022
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain:
+          - "1.90.0"
+          - stable
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: dtolnay/rust-toolchain@d1031067263f94b142dd6c0ce24c5eb9d02d52a0 # master at d103106 (2026-09-03)
+        with:
+          toolchain: ${{ matrix.toolchain }}
+
+      - name: Report Rust and Cargo versions
+        shell: pwsh
+        run: |
+          rustc --version --verbose
+          rustc -vV | Select-String '^host:'
+          cargo --version
+
+      - name: Check locked dependency graph
+        run: cargo check --locked --manifest-path src-tauri/Cargo.toml
+        working-directory: desktop-app
